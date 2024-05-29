@@ -173,7 +173,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
         heightFactor: 0.75,
         child: Column(children: <Widget>[
           Text(
-            "Bem-vindo(a) ao REP-A",
+            "Bem-vindo(a) ao Flash Coffee",
             style: TextStyle(
               fontSize: 22,
             ),
@@ -181,7 +181,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 0.0),
             child: Text(
-              "Software Prime na palma da sua mão",
+              "Seu momento, seu café",
             ),
           ),
           Padding(

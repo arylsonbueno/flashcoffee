@@ -6,7 +6,6 @@ import 'FbCreditCard.dart';
 
 class FbUserData {
   static final String _refBase = "users/";
-  static final String _photoUri = "/users/%s/profile/rosto01.jpeg";
 
   late FbKey key;
 
@@ -16,7 +15,4 @@ class FbUserData {
     return FbReference(_refBase + userUid);
   }
 
-  String? getPhotoUri() {
-    return sprintf(_photoUri, [key.getKey()]);
-  }
 }
