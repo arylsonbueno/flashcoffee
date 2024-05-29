@@ -13,13 +13,15 @@ import '../utils/so.dart';
 import 'analytics.dart';
 
 abstract class BaseAuth {
+
   Future<String?> signIn(String? email, String? password);
 
   Future<User?> getCurrentUser();
 
   Future<void> signOut();
 
-//Future<String> signUp(String email, String password);
+  Future<String> signUp(String? email, String? password);
+
   Future<bool> isEmailVerified();
 
   Future<void> sendEmailVerification();
@@ -45,47 +47,6 @@ class Auth implements BaseAuth {
     });
   }
 
-  static Future<void> _writeUserMessagingToken(
-      String userUid, String? fcmToken) async {
-    FbFcmToken msg = FbFcmToken(userUid, fcmToken);
-    FirebaseHelper.findNode(msg.getRef(), "fcmToken", fcmToken)
-        .then((DatabaseEvent value) => {
-              if (value.snapshot.exists)
-                {
-                  FirebaseHelper.update(
-                          '${msg.getRef()}/${value.snapshot.children.first.key}',
-                          msg.toMap())
-                      .then((success) {
-                    print(success
-                        ? 'Messaging Token updated! $fcmToken'
-                        : 'FAIL Write Messaging Token');
-                  })
-                }
-              else
-                {
-                  FirebaseHelper.insert(msg.getRef(), msg.toMap())
-                      .then((success) {
-                    print(success
-                        ? 'Messaging Token inserted! $fcmToken'
-                        : 'FAIL Write Messaging Token');
-                  })
-                }
-            });
-  }
-
-  _messagingRegistration(String userUid) async {
-    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
-      //necessary send token to application server.
-      _writeUserMessagingToken(userUid, fcmToken);
-    }).onError((err) {
-      print(err);
-    });
-    //check if need gentoken
-    FirebaseMessaging.instance
-        .getToken()
-        .then((fcmToken) => _writeUserMessagingToken(userUid, fcmToken));
-  }
-
   _loadSessionData(User user) async {
     try {
       if (await SO.checkInternetConnection()) {
@@ -94,7 +55,6 @@ class Auth implements BaseAuth {
         await _readUserData(user.uid, timeout: timeout)
             .then((FbUserData userData) async {
           _userSession = user;
-          await _messagingRegistration(user.uid);
           Analytics.addEventLogin();
         });
       }
@@ -116,9 +76,9 @@ class Auth implements BaseAuth {
     return null;
   }
 
-  Future<String> signUp(String email, String password) async {
+  Future<String> signUp(String? email, String? password) async {
     UserCredential result = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
+        email: email!, password: password!);
     User? user = result.user;
     return user!.uid;
   }

@@ -72,12 +72,11 @@ class _AppNavigatorState extends State<AppNavigator> {
                 label: "Home"),
             BottomNavigationBarItem(
                 icon: _inactiveIcon(Icons.shopping_basket, withBadge: true),
-                activeIcon:
-                    _activeIcon(Icons.access_time_filled, withBadge: true),
+                activeIcon: _activeIcon(Icons.shopping_basket_outlined, withBadge: true),
                 label: "Cesta"),
             BottomNavigationBarItem(
-                icon: _inactiveIcon(Icons.settings_outlined),
-                activeIcon: _activeIcon(Icons.build),
+                icon: _inactiveIcon(Icons.menu),
+                activeIcon: _activeIcon(Icons.menu_outlined),
                 label: "Perfil")
           ]),
     );
@@ -127,9 +126,8 @@ class _AppNavigatorState extends State<AppNavigator> {
   }
 
   _initPages() async {
+    _pages.add(HomePage());
     /*
-    _pages.add(
-        HomePage(auth: widget.auth, logoutCallback: widget.logoutCallback));
     _pages.add(RecordDatesListPage(
         userSession: userSession));
     _pages.add(SelfManDatesListPage(

@@ -32,7 +32,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
   late bool _isLoading;
 
   // Check if form is valid before perform login or signup
-  bool validateAndSave() {
+  bool _validateAndSave() {
     final form = _formKey.currentState!;
     if (form.validate()) {
       form.save();
@@ -41,10 +41,9 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
     return false;
   }
 
-  // Perform login or signup
-  void validateAndSubmit() async {
+  _validateAndSubmit() async {
     if (!_isLoading) {
-      if (validateAndSave()) {
+      if (_validateAndSave()) {
         setState(() {
           _errorMessage = "";
           _isLoading = true;
@@ -53,6 +52,53 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
         try {
           await widget.auth!
               .signIn(_email, _password)
+              .timeout(K_LOGIN_TIMEOUT)
+              .then((value) {
+            userId = value;
+          });
+          print('Signed in: $userId');
+          setState(() {
+            _isLoading = false;
+          });
+
+          if (userId != null && userId!.length > 0) {
+            widget.loginCallback!();
+          } else {
+            setState(() {
+              _errorMessage = 'Login inválido';
+            });
+          }
+        } on PlatformException catch (e) {
+          AuthProblems errType = plaformExceptionHandle(e);
+          String errMessage = "Usuário e/ou senha inválido(s)!";
+          setState(() {
+            _isLoading = false;
+            _formKey.currentState!.reset();
+            _errorMessage = errMessage;
+          });
+        } catch (e) {
+          print('Error: $e');
+          setState(() {
+            _isLoading = false;
+            //_formKey.currentState.reset();
+            _errorMessage = e.toString();
+          });
+        }
+      }
+    }
+  }
+
+   _validateAndEnroll() async {
+    if (!_isLoading) {
+      if (_validateAndSave()) {
+        setState(() {
+          _errorMessage = "";
+          _isLoading = true;
+        });
+        String? userId = "";
+        try {
+          await widget.auth!
+              .signUp(_email, _password)
               .timeout(K_LOGIN_TIMEOUT)
               .then((value) {
             userId = value;
@@ -257,16 +303,29 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
     });
   }
 
-  Widget primaryButton() {
+  Widget _primaryButton() {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
         padding: EdgeInsets.symmetric(
             vertical: screenHeight * 0.1, horizontal: screenWidth * 0.1),
         child: PrimaryButton(
-          title: "Login",
+          title: "Entrar",
           label: "Entrar",
-          onPressed: validateAndSubmit,
+          onPressed: _validateAndSubmit,
+        ));
+  }
+
+  Widget _secondaryButton() {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Padding(
+        padding: EdgeInsets.symmetric(
+            vertical: screenHeight * 0.1, horizontal: screenWidth * 0.1),
+        child: PrimaryButton(
+          title: "Cadastrar",
+          label: "Cadastrar",
+          onPressed: _validateAndEnroll,
         ));
   }
 
@@ -284,8 +343,8 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
               emailInput(),
               passwordInput(),
               showErrorMessage(),
-              primaryButton(),
-              //showSecondaryButton(),
+              _primaryButton(),
+              _secondaryButton()
             ],
           ),
         ));
