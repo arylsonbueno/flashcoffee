@@ -1,8 +1,10 @@
+import 'package:flashcoffee/firebase/models/FbReference.dart';
 import 'package:flashcoffee/pages/home.dart';
 import 'package:flashcoffee/services/basket_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import '../firebase/FirebaseHelper.dart';
 import '../firebase/models/FbBasket.dart';
 import '../widgets/primary_button.dart';
 import 'package:provider/provider.dart';
@@ -24,14 +26,19 @@ class ListItem {
 class _CheckoutPageState extends State<CheckoutPage> {
 
   _writePayment() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomePage(
-          //userSession: widget.userSession,
-        ),
-      ),
-    ); //close screen
+    BasketController controller = BasketController.getInstance();
+    FirebaseHelper.insert("sales", controller.getBasket().toMap()).then(
+        (success) {
+          controller.clear();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(
+                //userSession: widget.userSession,
+              ),
+            ),
+          );
+        });
   }
 
   Widget _primaryButton() {

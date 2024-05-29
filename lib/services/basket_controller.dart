@@ -13,11 +13,15 @@ class BasketController {
   }
 
   add(FbSaleItem item) {
-    _basket!.itens.add(item);
+    _basket.itens.add(item);
   }
 
   updateBasket(FbBasket basket) {
     _basket = basket;
+  }
+
+  clear() {
+    _basket = FbBasket();
   }
 
 }

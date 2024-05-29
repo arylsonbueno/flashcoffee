@@ -17,4 +17,10 @@ class FbBasket {
     return amount;
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'amount': amount(),
+    };
+  }
+
 }
