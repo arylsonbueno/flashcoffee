@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../firebase/models/FbBasket.dart';
+import '../services/basket_controller.dart';
 import 'custom.dart';
 
 class HomePage extends StatefulWidget {
@@ -36,6 +39,8 @@ class _HomePageState extends State<HomePage> {
 
         return GestureDetector(
             onTap: () {
+              BasketController.getInstance()
+                  .add(FbSaleItem("cappuc", 18));
               Navigator.push(
                 context,
                 MaterialPageRoute(

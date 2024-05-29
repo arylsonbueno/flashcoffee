@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../firebase/models/FbBasket.dart';
+import '../services/basket_controller.dart';
 import 'checkout.dart';
 
 class CustomPage extends StatefulWidget {
@@ -31,12 +34,18 @@ class _CustomPageState extends State<CustomPage> {
       },
     );
   }
+
+  _labelSelectedCoffee() {
+    return Text(BasketController.getInstance().getBasket().itens.first.name);
+  }
+
   Widget _buildCustomForm() {
     return Form(
       key: _formKey,
       child: Column(
         children: <Widget>[
-          _inputName()
+          _inputName(),
+          _labelSelectedCoffee(),
         ],
       ),
     );

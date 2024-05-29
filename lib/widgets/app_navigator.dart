@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../pages/home.dart';
 import '../services/authentication.dart';
 
+import '../services/basket_controller.dart';
 import '../utils/event_controller.dart';
 
 class AppNavigator extends StatefulWidget {
@@ -21,11 +23,6 @@ class _AppNavigatorState extends State<AppNavigator> {
   final List<Widget> _pages = [];
   PageController _pageController = PageController();
   int _offlineRecords = 0;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +119,8 @@ class _AppNavigatorState extends State<AppNavigator> {
 
   _load() async {
     await _loadUserSession();
-    if (_pages.isEmpty) await _initPages();
+    if (_pages.isEmpty)
+      await _initPages();
   }
 
   _initPages() async {

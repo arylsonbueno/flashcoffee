@@ -334,7 +334,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
         padding: EdgeInsets.all(16.0),
         child: new Form(
           key: _formKey,
-          child: new ListView(
+          child: ListView(
             shrinkWrap: true,
             semanticChildCount: 3,
             children: <Widget>[

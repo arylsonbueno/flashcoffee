@@ -1,6 +1,8 @@
 import 'package:flashcoffee/pages/root.dart';
 import 'package:flashcoffee/services/authentication.dart';
+import 'package:flashcoffee/services/basket_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'firebase/firebase_core.dart';
 

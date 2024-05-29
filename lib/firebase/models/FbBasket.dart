@@ -1,12 +1,20 @@
-class FbCoffee {
+class FbSaleItem {
   String name;
+  double price;
   int size = 0;
+  int quantity = 1;
 
-  FbCoffee(this.name);
+  FbSaleItem(this.name, this.price);
 }
 
 class FbBasket {
 
-  List<FbCoffee> itens = [];
+  List<FbSaleItem> itens = [];
+
+  double amount() {
+    double amount = 0;
+    itens.forEach((item) => amount += item.price);
+    return amount;
+  }
 
 }
