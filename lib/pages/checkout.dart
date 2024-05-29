@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../firebase/FirebaseHelper.dart';
-import '../widgets/primary_button.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
@@ -21,12 +20,22 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
 
   _buildDetails() {
+    final List<PriceItem> _priceItems = [];
+    BasketController.getInstance().getBasket().itens.forEach((item) {
+      _priceItems.add(PriceItem(
+          name: item.name,
+          quantity: item.quantity,
+          itemCostCents: (item.getPrice() * 100).round()
+      ));
+    });
+
+    /*
     final List<PriceItem> _priceItems = [
       PriceItem(name: 'Product A', quantity: 1, itemCostCents: 5200),
       PriceItem(name: 'Product B', quantity: 2, itemCostCents: 8599),
       PriceItem(name: 'Product C', quantity: 1, itemCostCents: 2499),
       PriceItem(name: 'Delivery Charge', quantity: 1, itemCostCents: 1599, canEditQuantity: false),
-    ];
+    ];*/
 
     var data = CheckoutData(
       priceItems: _priceItems,

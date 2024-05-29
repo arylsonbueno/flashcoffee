@@ -69,16 +69,89 @@ class _CustomPageState extends State<CustomPage> {
     return Text(BasketController.getInstance().getBasket().itens.first.name);
   }
 
-  Widget _buildCustomForm() {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          _inputName(),
-          _labelSelectedCoffee(),
-          _buildDropButtonSize(),
-        ],
-      ),
+  Widget buildColoredIcon(IconData icon, Color color) {
+    return CircleAvatar(
+      backgroundColor: color, // Define a opacidade da cor
+      child: Icon(icon, color: Colors.white), // Define o ícone
+    );
+  }
+
+  Map<String, List<Widget>> _customMap(BuildContext context) {
+    return {
+      "Café": [
+        ListTile(
+          leading: buildColoredIcon(Icons.cameraswitch, Colors.indigoAccent),
+          title: Text("Tamanho"),
+          subtitle: Text("O tamanho faz toda a diferença"),
+          subtitleTextStyle: TextStyle(color: Theme.of(context).hintColor),
+          trailing: _buildDropButtonSize(),
+          style: ListTileStyle.list,
+        ),
+      ]
+    };
+  }
+
+  Widget _buildCustomList() {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: _customMap(context).length,
+      shrinkWrap: true,
+      physics: PageScrollPhysics(),
+      itemBuilder: (BuildContext context, int index) {
+        String key = _customMap(context).keys.elementAt(index);
+        return Column(
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: screenWidth * 0.05, bottom: 10.0),
+              child: Text(
+                key,
+                style: TextStyle(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).hintColor),
+              ),
+            ),
+            Container(
+                margin: EdgeInsets.only(bottom: screenHeight * 0.03),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(40.0),
+                ),
+                child: ListView.builder(
+                  padding: EdgeInsets.all(5),
+                  itemCount: _customMap(context)[key]!.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (BuildContext context, int subIndex) {
+                    return Column(
+                      children: [
+                        _customMap(context)[key]![subIndex],
+                        Visibility(
+                          visible:
+                          subIndex < _customMap(context)[key]!.length - 1,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: screenWidth * 0.17,
+                                right: screenWidth * 0.05),
+                            child: Divider(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.15),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                )),
+          ],
+        );
+      },
     );
   }
 
@@ -101,7 +174,7 @@ class _CustomPageState extends State<CustomPage> {
         title: Text("Personalize seu café..."),
       ),
       body: Center(
-        child: _buildCustomForm(),
+        child: _buildCustomList(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openCheckout,
