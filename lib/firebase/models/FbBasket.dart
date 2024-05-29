@@ -1,10 +1,14 @@
 class FbSaleItem {
   String name;
-  double price;
+  Map<int,double> priceMap;
   int size = 0;
   int quantity = 1;
 
-  FbSaleItem(this.name, this.price);
+  FbSaleItem(this.name, this.priceMap);
+
+  double getPrice() {
+    return priceMap.values.elementAt(size);
+  }
 }
 
 class FbBasket {
@@ -13,7 +17,7 @@ class FbBasket {
 
   double amount() {
     double amount = 0;
-    itens.forEach((item) => amount += item.price);
+    itens.forEach((item) => amount += item.getPrice());
     return amount;
   }
 

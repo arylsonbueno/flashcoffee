@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../firebase/models/FbBasket.dart';
 import '../services/basket_controller.dart';
 import 'checkout.dart';
@@ -20,9 +18,17 @@ class ListItem {
   ListItem(this.title, this.image);
 }
 
+class DropDownItem {
+  dynamic key;
+  String? value;
+
+  DropDownItem({this.key, this.value});
+}
+
 class _CustomPageState extends State<CustomPage> {
 
   final _formKey = GlobalKey<FormState>();
+  int? _coffeeSize = 1;
 
   _inputName() {
     return TextFormField(
@@ -32,6 +38,30 @@ class _CustomPageState extends State<CustomPage> {
         }
         return null;
       },
+    );
+  }
+
+  List<DropDownItem> _sizes = [
+    DropDownItem(key: 0, value: "Pequeno"),
+    DropDownItem(key: 1, value: "Médio"),
+    DropDownItem(key: 2, value: "Grande")
+  ];
+  Widget _buildDropButtonSize() {
+    return DropdownButton<int>(
+      value: _coffeeSize,
+      icon: Icon(Icons.keyboard_arrow_down),
+      onChanged: (int? newValue) {
+        setState(() {
+          _coffeeSize = newValue;
+        });
+      },
+      isDense: true,
+      items: _sizes.map<DropdownMenuItem<int>>((DropDownItem item) {
+        return DropdownMenuItem<int>(
+          value: item.key,
+          child: Text(item.value!),
+        );
+      }).toList(),
     );
   }
 
@@ -46,18 +76,19 @@ class _CustomPageState extends State<CustomPage> {
         children: <Widget>[
           _inputName(),
           _labelSelectedCoffee(),
+          _buildDropButtonSize(),
         ],
       ),
     );
   }
 
   _openCheckout() {
+    FbSaleItem item = BasketController.getInstance().getBasket().itens.first;
+    item.size = _coffeeSize!;
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CheckoutPage(
-          //userSession: widget.userSession,
-        ),
+        builder: (context) => PaymentPage(),
       ),
     );
   }

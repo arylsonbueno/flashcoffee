@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../firebase/models/FbBasket.dart';
 import '../services/basket_controller.dart';
@@ -22,6 +21,7 @@ class ListItem {
 
 class _HomePageState extends State<HomePage> {
 
+  Map<int,double> priceMap = {0: 18, 1: 22, 2: 24};
   List<ListItem> items = [
     ListItem("Cappuccino", "assets/cappuccino.png"),
     ListItem("Frappe", "assets/frappe.png"),
@@ -40,13 +40,11 @@ class _HomePageState extends State<HomePage> {
         return GestureDetector(
             onTap: () {
               BasketController.getInstance()
-                  .add(FbSaleItem("cappuc", 18));
+                  .add(FbSaleItem(item.title, priceMap));
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CustomPage(
-                    //userSession: widget.userSession,
-                  ),
+                  builder: (context) => CustomPage(),
                 ),
               );
         },

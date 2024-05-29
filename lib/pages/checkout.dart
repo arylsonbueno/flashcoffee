@@ -1,29 +1,51 @@
-import 'package:flashcoffee/firebase/models/FbReference.dart';
+import 'dart:io';
+
+import 'package:checkout_screen_ui/checkout_page/checkout_page.dart';
+import 'package:checkout_screen_ui/models/price_item.dart';
 import 'package:flashcoffee/pages/home.dart';
 import 'package:flashcoffee/services/basket_controller.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../firebase/FirebaseHelper.dart';
-import '../firebase/models/FbBasket.dart';
 import '../widgets/primary_button.dart';
-import 'package:provider/provider.dart';
 
-class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({super.key});
+class PaymentPage extends StatefulWidget {
+  const PaymentPage({super.key});
 
   @override
-  State<CheckoutPage> createState() => _CheckoutPageState();
+  State<PaymentPage> createState() => _PaymentPageState();
 }
 
-class ListItem {
-  String title;
-  String image;
+class _PaymentPageState extends State<PaymentPage> {
 
-  ListItem(this.title, this.image);
-}
+  _buildDetails() {
+    final List<PriceItem> _priceItems = [
+      PriceItem(name: 'Product A', quantity: 1, itemCostCents: 5200),
+      PriceItem(name: 'Product B', quantity: 2, itemCostCents: 8599),
+      PriceItem(name: 'Product C', quantity: 1, itemCostCents: 2499),
+      PriceItem(name: 'Delivery Charge', quantity: 1, itemCostCents: 1599, canEditQuantity: false),
+    ];
 
-class _CheckoutPageState extends State<CheckoutPage> {
+    var data = CheckoutData(
+      priceItems: _priceItems,
+      taxRate: 0.00,
+      payToName: 'Flash Coffee Loja ZERO',
+      displayNativePay: true,
+      isApple: kIsWeb ? false : Platform.isIOS,
+      onNativePay: (checkoutResults) {
+        print('Native Pay');
+        _writePayment();
+      },
+      onCardPay: (paymentInfo, checkoutResults){
+        print('Card pay');
+        _writePayment();
+      },
+      onBack: ()=> Navigator.of(context).pop(),
+    );
+    return CheckoutPage(data: data);
+  }
 
   _writePayment() {
     BasketController controller = BasketController.getInstance();
@@ -33,25 +55,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => HomePage(
-                //userSession: widget.userSession,
-              ),
+              builder: (context) => HomePage(),
             ),
           );
         });
-  }
-
-  Widget _primaryButton() {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-    return Padding(
-        padding: EdgeInsets.symmetric(
-            vertical: screenHeight * 0.1, horizontal: screenWidth * 0.1),
-        child: PrimaryButton(
-          title: "Pagar",
-          label: "Pagar",
-          onPressed: _writePayment,
-        ));
   }
 
   @override
@@ -62,13 +69,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         title: Text("Confirme seu pedido"),
       ),
       body: Center(
-        child: ListView(
-        shrinkWrap: true,
-        semanticChildCount: 3,
-        children: <Widget>[
-            _primaryButton(),
-          ]
-        ),
+        child: _buildDetails(),
       ),
     );
   }
