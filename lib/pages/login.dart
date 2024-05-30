@@ -316,19 +316,6 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
         ));
   }
 
-  Widget _secondaryButton() {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-    return Padding(
-        padding: EdgeInsets.symmetric(
-            vertical: screenHeight * 0.1, horizontal: screenWidth * 0.1),
-        child: PrimaryButton(
-          title: "Cadastrar",
-          label: "Cadastrar",
-          onPressed: _validateAndEnroll,
-        ));
-  }
-
   Widget _showForm() {
     return Container(
         padding: EdgeInsets.all(16.0),
@@ -344,7 +331,19 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
               passwordInput(),
               showErrorMessage(),
               _primaryButton(),
-              _secondaryButton()
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Não tem uma conta?",
+                  ),
+                  const SizedBox(width: 4),
+                  TextButton(
+                    onPressed: _validateAndEnroll,
+                    child: const Text("Registrar"),
+                  ),
+                ],
+              ),
             ],
           ),
         ));

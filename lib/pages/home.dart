@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flashcoffee/firebase/models/FbReference.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +11,9 @@ import '../utils/image_firestored.dart';
 import 'custom.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage(this.currentUser, {super.key});
+
+  final User currentUser;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -70,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CustomPage(),
+                        builder: (context) => CustomPage(widget.currentUser),
                       ),
                     );
                   },

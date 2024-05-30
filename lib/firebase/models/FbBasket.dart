@@ -3,6 +3,7 @@ class FbSaleItem {
   Map<int,dynamic> priceMap;
   int size = 0;
   int quantity = 1;
+  String coffeeName = "";
 
   FbSaleItem(this.name, this.priceMap);
 
@@ -13,6 +14,8 @@ class FbSaleItem {
 
 class FbBasket {
 
+  String? userUid;
+  String? userMail;
   List<FbSaleItem> itens = [];
 
   double amount() {
@@ -23,6 +26,8 @@ class FbBasket {
 
   Map<String, dynamic> toMap() {
     return {
+      'userUid': userUid,
+      'userMail': userMail,
       'amount': amount(),
     };
   }

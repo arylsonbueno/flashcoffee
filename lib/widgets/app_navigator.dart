@@ -124,18 +124,7 @@ class _AppNavigatorState extends State<AppNavigator> {
   }
 
   _initPages() async {
-    _pages.add(HomePage());
-    /*
-    _pages.add(RecordDatesListPage(
-        userSession: userSession));
-    _pages.add(SelfManDatesListPage(
-        userSession: userSession,
-    ));
-    _pages.add(SettingsPage(
-      userSession: userSession,
-      logoutCallback: widget.logoutCallback,
-    ));
-     */
+    _pages.add(HomePage(userSession!));
   }
 
 }

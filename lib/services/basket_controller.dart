@@ -1,7 +1,7 @@
 import '../firebase/models/FbBasket.dart';
 
 class BasketController {
-  static BasketController _instance = BasketController();
+  static final BasketController _instance = BasketController();
   FbBasket _basket = FbBasket();
 
   static BasketController getInstance() {
@@ -21,7 +21,7 @@ class BasketController {
   }
 
   clear() {
-    _basket = FbBasket();
+    _basket.itens.clear();
   }
 
 }

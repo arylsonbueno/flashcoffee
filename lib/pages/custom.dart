@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../firebase/models/FbBasket.dart';
@@ -5,7 +6,9 @@ import '../services/basket_controller.dart';
 import 'checkout.dart';
 
 class CustomPage extends StatefulWidget {
-  const CustomPage({super.key});
+  const CustomPage(this.currentUser, {super.key});
+
+  final User currentUser;
 
   @override
   State<CustomPage> createState() => _CustomPageState();
@@ -28,24 +31,14 @@ class DropDownItem {
 class _CustomPageState extends State<CustomPage> {
   
   int? _coffeeSize = 1;
+  String _coffeeName = "";
 
-  _inputName() {
-    return TextFormField(
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Por favor informe seu nome';
-        }
-        return null;
-      },
-    );
-  }
-
-  List<DropDownItem> _sizes = [
-    DropDownItem(key: 0, value: "Pequeno"),
-    DropDownItem(key: 1, value: "Médio"),
-    DropDownItem(key: 2, value: "Grande")
-  ];
   Widget _buildDropButtonSize() {
+    final List<DropDownItem> _sizes = [
+      DropDownItem(key: 0, value: "Pequeno"),
+      DropDownItem(key: 1, value: "Médio"),
+      DropDownItem(key: 2, value: "Grande")
+    ];
     return DropdownButton<int>(
       value: _coffeeSize,
       icon: Icon(Icons.keyboard_arrow_down),
@@ -64,10 +57,6 @@ class _CustomPageState extends State<CustomPage> {
     );
   }
 
-  _labelSelectedCoffee() {
-    return Text(BasketController.getInstance().getBasket().itens.first.name);
-  }
-
   Widget buildColoredIcon(IconData icon, Color color) {
     return CircleAvatar(
       backgroundColor: color, // Define a opacidade da cor
@@ -75,11 +64,45 @@ class _CustomPageState extends State<CustomPage> {
     );
   }
 
+  _inputName() {
+    return ListTile(
+      trailing: Container(
+        width: 150.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Expanded(
+              flex: 3,
+              child: TextFormField(
+                initialValue: _coffeeName,
+                textAlign: TextAlign.center,
+                decoration: InputDecoration.collapsed(hintText: 'Seu nome?'),
+                onChanged: (newValue) {
+                  setState(() {
+                    _coffeeName = newValue;
+                  });
+                },
+              ),
+            ),
+            Expanded(
+              child: IconButton(
+                icon: Icon(Icons.chevron_right),
+                color: Colors.black26,
+                onPressed: () {},
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   Map<String, List<Widget>> _customMap(BuildContext context) {
     return {
       "Café": [
+        _inputName(),
         ListTile(
-          leading: buildColoredIcon(Icons.cameraswitch, Colors.indigoAccent),
+          leading: buildColoredIcon(Icons.accessibility_sharp, Colors.indigoAccent),
           title: Text("Tamanho"),
           subtitle: Text("Como está sua sede?"),
           subtitleTextStyle: TextStyle(color: Theme.of(context).hintColor),
@@ -155,12 +178,14 @@ class _CustomPageState extends State<CustomPage> {
   }
 
   _openCheckout() {
-    FbSaleItem item = BasketController.getInstance().getBasket().itens.first;
+    FbSaleItem item = BasketController.getInstance().getBasket().itens.last;
     item.size = _coffeeSize!;
+    item.coffeeName = _coffeeName;
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PaymentPage(),
+        builder: (context) => PaymentPage(widget.currentUser),
       ),
     );
   }
