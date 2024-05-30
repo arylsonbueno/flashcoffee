@@ -1,6 +1,6 @@
 class FbSaleItem {
   String name;
-  Map<int,double> priceMap;
+  Map<int,dynamic> priceMap;
   int size = 0;
   int quantity = 1;
 

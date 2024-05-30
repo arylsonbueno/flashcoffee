@@ -19,13 +19,17 @@ class HomePage extends StatefulWidget {
 class ListItem {
   String title;
   String image;
+  Map<int,dynamic> priceMap;
 
-  ListItem(this.title, this.image);
+  ListItem(this.title, this.image, this.priceMap);
 }
 
 class _HomePageState extends State<HomePage> {
 
-  Map<int,double> priceMap = {0: 18, 1: 22, 2: 24};
+  Map<int,dynamic> _readPriceMap(DataSnapshot dsMap) {
+    List<dynamic> list = dsMap.value as List<dynamic>;
+    return list.asMap();
+  }
 
   Future<List<ListItem>> _loadProducts() async {
     try {
@@ -37,7 +41,8 @@ class _HomePageState extends State<HomePage> {
         dataSnap.children.forEach((dsProduct) {
           String name = dsProduct.child('name').value as String;
           String imageUrl = dsProduct.child('image').value as String;
-          itens.add(ListItem(name, imageUrl));
+          Map<int,dynamic> priceMap = _readPriceMap(dsProduct.child('priceMap'));
+          itens.add(ListItem(name, imageUrl, priceMap));
         });
         return itens;
       });
@@ -61,7 +66,7 @@ class _HomePageState extends State<HomePage> {
               return GestureDetector(
                   onTap: () {
                     BasketController.getInstance()
-                        .add(FbSaleItem(item.title, priceMap));
+                        .add(FbSaleItem(item.title, item.priceMap));
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -78,7 +83,6 @@ class _HomePageState extends State<HomePage> {
                           maxWidth: 64,
                           maxHeight: 64,
                         ),
-                        //child: Image.asset(item.image, fit: BoxFit.cover),
                         child: ImageFirestoredWidget(uri: item.image),
                       )
                   ));
