@@ -26,8 +26,7 @@ class DropDownItem {
 }
 
 class _CustomPageState extends State<CustomPage> {
-
-  final _formKey = GlobalKey<FormState>();
+  
   int? _coffeeSize = 1;
 
   _inputName() {
@@ -82,7 +81,7 @@ class _CustomPageState extends State<CustomPage> {
         ListTile(
           leading: buildColoredIcon(Icons.cameraswitch, Colors.indigoAccent),
           title: Text("Tamanho"),
-          subtitle: Text("O tamanho faz toda a diferença"),
+          subtitle: Text("Como está sua sede?"),
           subtitleTextStyle: TextStyle(color: Theme.of(context).hintColor),
           trailing: _buildDropButtonSize(),
           style: ListTileStyle.list,

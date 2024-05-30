@@ -29,14 +29,6 @@ class _PaymentPageState extends State<PaymentPage> {
       ));
     });
 
-    /*
-    final List<PriceItem> _priceItems = [
-      PriceItem(name: 'Product A', quantity: 1, itemCostCents: 5200),
-      PriceItem(name: 'Product B', quantity: 2, itemCostCents: 8599),
-      PriceItem(name: 'Product C', quantity: 1, itemCostCents: 2499),
-      PriceItem(name: 'Delivery Charge', quantity: 1, itemCostCents: 1599, canEditQuantity: false),
-    ];*/
-
     var data = CheckoutData(
       priceItems: _priceItems,
       taxRate: 0.00,

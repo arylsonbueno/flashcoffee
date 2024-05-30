@@ -1,8 +1,12 @@
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flashcoffee/firebase/models/FbReference.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../firebase/FirebaseHelper.dart';
 import '../firebase/models/FbBasket.dart';
 import '../services/basket_controller.dart';
+import '../utils/image_firestored.dart';
 import 'custom.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,45 +26,65 @@ class ListItem {
 class _HomePageState extends State<HomePage> {
 
   Map<int,double> priceMap = {0: 18, 1: 22, 2: 24};
-  List<ListItem> items = [
-    ListItem("Cappuccino", "assets/cappuccino.png"),
-    ListItem("Frappe", "assets/frappe.png"),
-    ListItem("Glase", "assets/glase.png"),
-  ];
+
+  Future<List<ListItem>> _loadProducts() async {
+    try {
+      FbReference ref = new FbReference("products");
+      return FirebaseHelper.readNode(ref, timeout: Duration(seconds: 5)).then((
+          event) {
+        DataSnapshot dataSnap = event.snapshot.child('itens');
+        List<ListItem> itens = [];
+        dataSnap.children.forEach((dsProduct) {
+          String name = dsProduct.child('name').value as String;
+          String imageUrl = dsProduct.child('image').value as String;
+          itens.add(ListItem(name, imageUrl));
+        });
+        return itens;
+      });
+    } catch(error) {
+      return [];
+    }
+  }
 
   Widget _buildGridView() {
-    return ListView.builder(
-      // Let the ListView know how many items it needs to build.
-      itemCount: items.length,
-      // Provide a builder function. This is where the magic happens.
-      // Convert each item into a widget based on the type of item it is.
-      itemBuilder: (context, index) {
-        final item = items[index];
-
-        return GestureDetector(
-            onTap: () {
-              BasketController.getInstance()
-                  .add(FbSaleItem(item.title, priceMap));
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CustomPage(),
-                ),
-              );
-        },
-        child: ListTile(
-          title: Text(item.title),
-          leading: ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: 44,
-                minHeight: 44,
-                maxWidth: 64,
-                maxHeight: 64,
-              ),
-              child: Image.asset(item.image, fit: BoxFit.cover),
-            )
-        ));
-      },
+    return FutureBuilder(
+        future: _loadProducts(),
+        builder: (context, res) {
+          if (res.connectionState != ConnectionState.done ||
+              res.hasData == false) {
+            return Container();//loading...
+          }
+          return ListView.builder(
+            itemCount: res.data!.length,
+            itemBuilder: (context, index) {
+              final item = res.data![index];
+              return GestureDetector(
+                  onTap: () {
+                    BasketController.getInstance()
+                        .add(FbSaleItem(item.title, priceMap));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CustomPage(),
+                      ),
+                    );
+                  },
+                  child: ListTile(
+                      title: Text(item.title),
+                      leading: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: 44,
+                          minHeight: 44,
+                          maxWidth: 64,
+                          maxHeight: 64,
+                        ),
+                        //child: Image.asset(item.image, fit: BoxFit.cover),
+                        child: ImageFirestoredWidget(uri: item.image),
+                      )
+                  ));
+            },
+          );
+        }
     );
   }
 
